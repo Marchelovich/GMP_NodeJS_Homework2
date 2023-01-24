@@ -1,4 +1,4 @@
-import userMapper from "../data-access/mappers/userMapper";
+import userMapper from '../data-access/mappers/userMapper';
 
 export default class UserController {
     constructor(userRepository) {
@@ -24,7 +24,7 @@ export default class UserController {
     };
 
     getUserByID = async (req, res) => {
-        const user = await this.userRepository.getByID(req.params.id)
+        const user = await this.userRepository.getByID(req.params.id);
         if (user !== null) {
             res.send(user);
         } else {
@@ -36,7 +36,7 @@ export default class UserController {
         const entity = userMapper.toEntity(req.body);
         const result = await this.userRepository.update(req.params.id, entity);
 
-        if(result === null) {
+        if (result === null) {
             res.status(404).send('Not found');
         } else if (!result.error) {
             res.send(result);
@@ -54,5 +54,4 @@ export default class UserController {
         }
     };
 }
-
 

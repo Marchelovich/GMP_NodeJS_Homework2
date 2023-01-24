@@ -7,7 +7,7 @@ export default class UserRepository {
     }
 
     async getAutoSuggestUsers(loginSubstring = '', limit = 10) {
-        const models = await this.model.findAll({where: {'login': { [Op.iLike]: `%${loginSubstring}%`}}, limit: limit});
+        const models = await this.model.findAll({ where: { 'login': { [Op.iLike]: `%${loginSubstring}%` } }, limit });
 
         return models.map(model => this.mapper.toDomain(model));
     }
@@ -38,7 +38,7 @@ export default class UserRepository {
 
         return !result.error
             ? this.mapper.toDomain(model)
-            : {error : result.error};
+            : { error : result.error };
     }
 
     async delete(ID) {
@@ -46,10 +46,10 @@ export default class UserRepository {
         if (!model) {
             return false;
         }
-        const result = await model.set({isDeleted: true}).save();
+        const result = await model.set({ isDeleted: true }).save();
 
         return !result.error
             ? this.mapper.toDomain(model)
-            : {error : result.error};
+            : { error : result.error };
     }
 }

@@ -1,5 +1,5 @@
-import UserController from "./userController"
-import Joi from "joi";
+import UserController from './userController';
+import Joi from 'joi';
 import userRepository from '../data-access/repositories/userRepository';
 import userModel from '../models/userModel';
 import userMapper from '../data-access/mappers/userMapper';
@@ -12,14 +12,15 @@ const schema = Joi.object({
         .required(),
     password: Joi.string().alphanum().required(),
     age: Joi.number().min(14).max(130).integer().required(),
-    isDeleted: Joi.bool().required(),
+    isDeleted: Joi.bool().required()
 });
 
 const validateUserMiddleWare = (req, res, next) => {
-    let result = schema.validate(req.body);
+    const result = schema.validate(req.body);
     if (result.error) {
         res.status(422).send(result.error);
     } else {
+        // eslint-disable-next-line callback-return
         next();
     }
 };

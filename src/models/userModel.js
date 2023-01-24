@@ -1,4 +1,4 @@
-import db from "./index";
+import db from './index';
 const { DataTypes } = require('sequelize');
 
 const User = db.define('users', {
@@ -18,11 +18,11 @@ const User = db.define('users', {
     age: {
         type: DataTypes.INTEGER,
         min: 14,
-        max: 130,
+        max: 130
     },
     isDeleted: {
-        type: DataTypes.BOOLEAN,
-    },
+        type: DataTypes.BOOLEAN
+    }
 }, {
     timestamps: false
 });

@@ -1,5 +1,5 @@
-import dbParams from '../config/db.local.json'
-import {Sequelize} from "sequelize";
+import dbParams from '../config/db.local.json';
+import { Sequelize } from 'sequelize';
 
 const sequelize = new Sequelize(dbParams.database, dbParams.user, dbParams.password, {
     host: dbParams.host,
@@ -10,7 +10,7 @@ sequelize.authenticate().then(() => {
     console.log('Connection has been established successfully.');
 }).catch((error) => {
     if (error) {
-        console.log(error)
+        console.log(error);
     }
 });
 
