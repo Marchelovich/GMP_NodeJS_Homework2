@@ -1,39 +1,39 @@
 import UserController from './userController';
-import Joi from 'joi';
-import userRepository from '../data-access/repositories/userRepository';
-import userModel from '../models/userModel';
-import userMapper from '../data-access/mappers/userMapper';
+import UserRepository from '../data-access/repositories/userRepository';
+import UserModel from '../models/userModel';
+import UserMapper from '../data-access/mappers/userMapper';
+import GroupRepository from '../data-access/repositories/groupRepository';
+import GroupModel from '../models/groupModel';
+import GroupMapper from '../data-access/mappers/groupMapper';
+import GroupController from './groupController';
+import { validateUserMiddleware } from './middlewares/userMiddleware';
+import { validateGroupMiddleware, validateUsersIds } from './middlewares/groupMiddleware';
 
-const userController = new UserController(new userRepository(userModel, userMapper));
+const userController = new UserController(new UserRepository(UserModel, UserMapper));
+const groupController = new GroupController(new GroupRepository(GroupModel, GroupMapper, UserModel));
 
-const schema = Joi.object({
-    login: Joi.string()
-        .alphanum()
-        .required(),
-    password: Joi.string().alphanum().required(),
-    age: Joi.number().min(14).max(130).integer().required(),
-    isDeleted: Joi.bool().required()
-});
-
-const validateUserMiddleWare = (req, res, next) => {
-    const result = schema.validate(req.body);
-    if (result.error) {
-        res.status(422).send(result.error);
-    } else {
-        // eslint-disable-next-line callback-return
-        next();
-    }
-};
 
 const routes = (app) => {
     app.route('/users')
         .get(userController.getUsers)
-        .post(validateUserMiddleWare, userController.addNewUser);
+        .post(validateUserMiddleware, userController.addNewUser);
 
     app.route('/users/:id')
         .get(userController.getUserByID)
-        .put(validateUserMiddleWare, userController.updateUser)
+        .put(validateUserMiddleware, userController.updateUser)
         .delete(userController.deleteUser);
+
+    app.route('/groups')
+        .get(groupController.getGroups)
+        .post(validateGroupMiddleware, groupController.addNewGroup);
+
+    app.route('/groups/:id')
+        .get(groupController.getGroupByID)
+        .put(validateGroupMiddleware, groupController.updateGroup)
+        .delete(groupController.deleteGroup);
+
+    app.route('/groups/:id/add-users')
+        .post(validateUsersIds, groupController.addUsersToGroup);
 };
 
 export default routes;

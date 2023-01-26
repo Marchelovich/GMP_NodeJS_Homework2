@@ -5,7 +5,7 @@ export default class UserMapper {
             login: entity.dataValues.login,
             password: entity.dataValues.password,
             age: entity.dataValues.age,
-            isDeleted: entity.dataValues.isDeleted,
+            isDeleted: entity.dataValues.isDeleted
         };
     }
 
@@ -14,7 +14,7 @@ export default class UserMapper {
             login: domain.login,
             password: domain.password,
             age: domain.age,
-            isDeleted: domain.isDeleted,
+            isDeleted: domain.isDeleted
         };
     }
 }
