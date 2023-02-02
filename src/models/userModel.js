@@ -1,10 +1,12 @@
+import { v4 as uuidv4 } from 'uuid';
+
 export default class User {
     constructor(login, password, age, isDeleted = false) {
-            this.id = User.idGenerator.next().value;
-            this.login = login;
-            this.password = password;
-            this.age = Number(age);
-            this.isDeleted = isDeleted === "true";
+        this.id = uuidv4();
+        this.login = login;
+        this.password = password;
+        this.age = Number(age);
+        this.isDeleted = isDeleted === 'true';
     }
 
     update(login, password, age, isDeleted) {
@@ -18,16 +20,7 @@ export default class User {
             this.age = Number(age);
         }
         if (isDeleted !== undefined) {
-            this.isDeleted = isDeleted === "true";
+            this.isDeleted = isDeleted === 'true';
         }
     }
-
-    static idGenerator = (function* () {
-        let i = 0;
-        while (true) {
-            i = i + 1;
-            yield i;
-        }
-    })();
-
 }
