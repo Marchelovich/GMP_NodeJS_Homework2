@@ -1,22 +1,23 @@
 import userMapper from '../data-access/mappers/userMapper';
 
 export default class UserController {
-    constructor(userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    async getAutoSuggestUsers(loginSubstring = '', limit = 10) {
-        return await this.userRepository.getAutoSuggestUsers(loginSubstring, limit);
+    constructor(userService) {
+        this.userService = userService;
     }
 
     addNewUser = async (req, res) => {
         const entity = userMapper.toEntity(req.body);
-        const user = await this.userRepository.create(entity);
-        res.send(user);
+        try {
+            const user = await this.userService.create(entity);
+            res.send(user);
+        } catch (e) {
+            console.log(e);
+            res.status(500);
+        }
     };
 
     getUsers = async (req, res) => {
-        const users = await this.getAutoSuggestUsers(req.query.login, req.query.limit);
+        const users = await this.userService.getUsers(req.query.login, req.query.limit);
         if (users.length === 0) {
             res.status(404).send();
         }
@@ -24,7 +25,7 @@ export default class UserController {
     };
 
     getUserByID = async (req, res) => {
-        const user = await this.userRepository.getByID(req.params.id);
+        const user = await this.userService.getByID(req.params.id);
         if (user !== null) {
             res.send(user);
         } else {
@@ -34,7 +35,7 @@ export default class UserController {
 
     updateUser = async (req, res) => {
         const entity = userMapper.toEntity(req.body);
-        const result = await this.userRepository.update(req.params.id, entity);
+        const result = await this.userService.update(req.params.id, entity);
 
         if (result === null) {
             res.status(404).send('Not found');
@@ -46,7 +47,7 @@ export default class UserController {
     };
 
     deleteUser = async (req, res) => {
-        const result = await this.userRepository.delete(req.params.id);
+        const result = await this.userService.delete(req.params.id);
         if (result) {
             res.status(203).send(result);
         } else {

@@ -8,6 +8,12 @@ const PORT = 80;
 // bodyParser setup
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use((err, req, res, next) => {
+    if (err) {
+        console.log(err);
+    }
+    next();
+});
 
 api(app);
 

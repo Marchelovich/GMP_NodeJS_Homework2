@@ -1,3 +1,4 @@
 node_modules
 
-src/config/db.local.json
+src/config/db.json
+config/config.json

@@ -24,6 +24,7 @@ export default class UserRepository {
     }
 
     async create(entity) {
+        console.log(this.model);
         const model = await this.model.create(entity);
 
         return this.mapper.toDomain(model);

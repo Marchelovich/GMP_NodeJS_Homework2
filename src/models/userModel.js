@@ -1,10 +1,10 @@
 import db from './index';
-const { DataTypes } = require('sequelize');
+import { DataTypes } from 'sequelize';
 
 const User = db.define('users', {
     id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true
     },
     login: {
