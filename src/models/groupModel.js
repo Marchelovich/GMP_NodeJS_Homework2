@@ -5,8 +5,8 @@ const { DataTypes } = require('sequelize');
 
 const Group = db.define('groups', {
     id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true
     },
     name: {

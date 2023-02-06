@@ -52,13 +52,17 @@ export default class GroupController {
     };
 
     addUsersToGroup = async (req, res) => {
-        const result = await this.groupRepository.addUsersToGroup(req.params.id, req.body.usersIds);
-
-        if (result) {
-            res.status(201).send();
-        } else if (result === undefined) {
-            res.status(200).send('Records are already exist');
-        } else {
+        try {
+            const result = await this.groupRepository.addUsersToGroup(req.params.id, req.body.usersIds);
+            if (result) {
+                res.status(201).send();
+            } else if (result === undefined) {
+                res.status(200).send('Records are already exist');
+            } else {
+                res.status(500).send();
+            }
+        } catch (e) {
+            console.log(e);
             res.status(500).send();
         }
     }

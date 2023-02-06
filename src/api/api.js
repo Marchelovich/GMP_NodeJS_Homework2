@@ -8,10 +8,11 @@ import GroupMapper from '../data-access/mappers/groupMapper';
 import GroupController from './groupController';
 import { validateUserMiddleware } from './middlewares/userMiddleware';
 import { validateGroupMiddleware, validateUsersIds } from './middlewares/groupMiddleware';
+import UserService from '../services/userService';
+import GroupService from '../services/groupService';
 
-const userController = new UserController(new UserRepository(UserModel, UserMapper));
-const groupController = new GroupController(new GroupRepository(GroupModel, GroupMapper, UserModel));
-
+const userController = new UserController(new UserService(new UserRepository(UserModel, UserMapper)));
+const groupController = new GroupController(new GroupService(new GroupRepository(GroupModel, GroupMapper, UserModel)));
 
 const routes = (app) => {
     app.route('/users')

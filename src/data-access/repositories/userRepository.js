@@ -7,7 +7,11 @@ export default class UserRepository {
     }
 
     async getAutoSuggestUsers(loginSubstring = '', limit = 10) {
-        const models = await this.model.findAll({ where: { 'login': { [Op.iLike]: `%${loginSubstring}%` } }, limit });
+        const models = await this.model.findAll({
+            where: { 'login': { [Op.iLike]: `%${loginSubstring}%` } },
+            limit,
+            order: ['login']
+        });
 
         return models.map(model => this.mapper.toDomain(model));
     }

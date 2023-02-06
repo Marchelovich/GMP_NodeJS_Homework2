@@ -13,7 +13,7 @@ export const validateGroupMiddleware = (req, res, next) => {
 
 export const validateUsersIds = (req, res, next) => {
     const usersIdsSchema = Joi.object({
-        usersIds: Joi.array().items(Joi.number().integer().min(1).required()).required()
+        usersIds: Joi.array().items(Joi.string().required()).required()
     });
 
     const result = usersIdsSchema.validate(req.body);
