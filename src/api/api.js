@@ -1,51 +1,40 @@
 import UserController from './userController';
-import Joi from 'joi';
-import userRepository from '../data-access/repositories/userRepository';
-import userService from '../services/userService';
-import userModel from '../models/userModel';
-import userMapper from '../data-access/mappers/userMapper';
+import UserRepository from '../data-access/repositories/userRepository';
+import UserModel from '../models/userModel';
+import UserMapper from '../data-access/mappers/userMapper';
+import GroupRepository from '../data-access/repositories/groupRepository';
+import GroupModel from '../models/groupModel';
+import GroupMapper from '../data-access/mappers/groupMapper';
+import GroupController from './groupController';
+import { validateUserMiddleware } from './middlewares/userMiddleware';
+import { validateGroupMiddleware, validateUsersIds } from './middlewares/groupMiddleware';
+import UserService from '../services/userService';
+import GroupService from '../services/groupService';
 
-const userController = new UserController(new userService(new userRepository(userModel, userMapper)));
-const schema = Joi.object({
-    login: Joi.string()
-        .alphanum()
-        .required().external(async (value, helper) => {
-            // helper.context is the Sequelize model instance
-            const existingRecord = await helper.prefs.context.Model.findOne({
-                where: { login: value },
-                paranoid: false
-            });
-
-            if (existingRecord && (!helper.prefs.context.id || helper.prefs.context.id !== existingRecord.dataValues.id)) {
-                return Promise.reject({ 'message': 'Login already exists' });
-            }
-            return Promise.resolve();
-        }),
-    password: Joi.string().alphanum().required(),
-    age: Joi.number().min(14).max(130).integer().required(),
-    isDeleted: Joi.bool().required()
-});
-
-const validateUserMiddleWare = async (req, res, next) => {
-    try {
-        await schema.validateAsync(req.body, { context: { Model: userModel, id: req.params.id } });
-        // eslint-disable-next-line callback-return
-        next();
-    } catch (e) {
-        console.log(e);
-        res.status(422).send(e);
-    }
-};
+const userController = new UserController(new UserService(new UserRepository(UserModel, UserMapper)));
+const groupController = new GroupController(new GroupService(new GroupRepository(GroupModel, GroupMapper, UserModel)));
 
 const routes = (app) => {
     app.route('/users')
         .get(userController.getUsers)
-        .post(validateUserMiddleWare, userController.addNewUser);
+        .post(validateUserMiddleware, userController.addNewUser);
 
     app.route('/users/:id')
         .get(userController.getUserByID)
-        .put(validateUserMiddleWare, userController.updateUser)
+        .put(validateUserMiddleware, userController.updateUser)
         .delete(userController.deleteUser);
+
+    app.route('/groups')
+        .get(groupController.getGroups)
+        .post(validateGroupMiddleware, groupController.addNewGroup);
+
+    app.route('/groups/:id')
+        .get(groupController.getGroupByID)
+        .put(validateGroupMiddleware, groupController.updateGroup)
+        .delete(groupController.deleteGroup);
+
+    app.route('/groups/:id/add-users')
+        .post(validateUsersIds, groupController.addUsersToGroup);
 };
 
 export default routes;

@@ -2,7 +2,7 @@ const { v4: uuidv4 } = require('uuid');
 
 /** @type {import('sequelize-cli').Migration}  */
 module.exports = {
-    up(queryInterface) {
+    async up(queryInterface) {
         return queryInterface.bulkInsert('users', [
             {
                 id: uuidv4(),
@@ -66,5 +66,10 @@ module.exports = {
                 password: 'password10'
             }
         ]);
+    },
+
+    async down(queryInterface) {
+        return queryInterface.bulkDelete('users', null, {});
     }
+
 };
