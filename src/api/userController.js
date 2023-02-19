@@ -20,9 +20,6 @@ export default class UserController {
     getUsers = async (req, res, next) => {
         try {
             const users = await this.userService.getUsers(req.query.login, req.query.limit);
-            if (users.length === 0) {
-                res.status(404).send();
-            }
             res.send(users);
         } catch (err) {
             logger.error(`UserController::getUsers | Args: ${JSON.stringify(req.query)} | Error: ${err.message}`);

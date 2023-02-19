@@ -20,9 +20,6 @@ export default class GroupController {
     getGroups = async (req, res) => {
         try {
             const groups = await this.groupRepository.getAll();
-            if (groups.length === 0) {
-                res.status(404).send();
-            }
             res.send(groups);
         } catch (err) {
             logger.error(`GroupController::getGroups | Args: ${JSON.stringify(req.query)} | Error: ${err.message}`);
