@@ -1,4 +1,5 @@
 import userMapper from '../data-access/mappers/userMapper';
+import logger from '../logger';
 
 export default class UserController {
     constructor(userService) {
@@ -6,52 +7,69 @@ export default class UserController {
     }
 
     addNewUser = async (req, res) => {
-        const entity = userMapper.toEntity(req.body);
         try {
+            const entity = userMapper.toEntity(req.body);
             const user = await this.userService.create(entity);
             res.send(user);
-        } catch (e) {
-            console.log(e);
+        } catch (err) {
+            logger.error(`UserController::addNewUser | Args: ${JSON.stringify(req.body)} | Error: ${err.message}`);
             res.status(500);
         }
     };
 
-    getUsers = async (req, res) => {
-        const users = await this.userService.getUsers(req.query.login, req.query.limit);
-        if (users.length === 0) {
-            res.status(404).send();
+    getUsers = async (req, res, next) => {
+        try {
+            const users = await this.userService.getUsers(req.query.login, req.query.limit);
+            res.send(users);
+        } catch (err) {
+            logger.error(`UserController::getUsers | Args: ${JSON.stringify(req.query)} | Error: ${err.message}`);
+            next(err);
         }
-        res.send(users);
     };
 
     getUserByID = async (req, res) => {
-        const user = await this.userService.getByID(req.params.id);
-        if (user !== null) {
-            res.send(user);
-        } else {
-            res.status(404).send('Not found');
+        try {
+            const user = await this.userService.getByID(req.params.id);
+            if (user !== null) {
+                res.send(user);
+            } else {
+                res.status(404).send('Not found');
+            }
+        } catch (err) {
+            logger.error(`UserController::getUserByID | Args: ${JSON.stringify(req.params)} | Error: ${err.message}`);
+            next(err);
         }
     };
 
     updateUser = async (req, res) => {
-        const entity = userMapper.toEntity(req.body);
-        const result = await this.userService.update(req.params.id, entity);
+        try {
+            const entity = userMapper.toEntity(req.body);
+            const result = await this.userService.update(req.params.id, entity);
 
-        if (result === null) {
-            res.status(404).send('Not found');
-        } else if (!result.error) {
-            res.send(result);
-        } else {
-            res.status(500).send(result.error);
+            if (result === null) {
+                res.status(404).send('Not found');
+            } else if (!result.error) {
+                res.send(result);
+            } else {
+                res.status(500).send(result.error);
+            }
+        } catch (err) {
+            logger.error(`UserController::updateUser | Args: ${JSON.stringify(req.body)}, ${JSON.stringify(req.body.usersIds)} | Error: ${err.message}`);
+            next(err);
         }
     };
 
     deleteUser = async (req, res) => {
-        const result = await this.userService.delete(req.params.id);
-        if (result) {
-            res.status(203).send(result);
-        } else {
-            res.status(404).send('Not found');
+        try {
+            const result = await this.userService.delete(req.params.id);
+            if (result) {
+                res.status(203).send(result);
+            } else {
+                res.status(404).send('Not found');
+            }
+        } catch (err) {
+            logger.error(`UserController::deleteUser | Args: ${JSON.stringify(req.params)} | Error: ${err.message}`);
+            next(err);
         }
     };
 }
