@@ -6,14 +6,14 @@ export default class UserController {
         this.userService = userService;
     }
 
-    addNewUser = async (req, res) => {
+    addNewUser = async (req, res, next) => {
         try {
             const entity = userMapper.toEntity(req.body);
             const user = await this.userService.create(entity);
             res.send(user);
         } catch (err) {
             logger.error(`UserController::addNewUser | Args: ${JSON.stringify(req.body)} | Error: ${err.message}`);
-            res.status(500);
+            next(err);
         }
     };
 
@@ -27,7 +27,7 @@ export default class UserController {
         }
     };
 
-    getUserByID = async (req, res) => {
+    getUserByID = async (req, res, next) => {
         try {
             const user = await this.userService.getByID(req.params.id);
             if (user !== null) {
@@ -41,7 +41,7 @@ export default class UserController {
         }
     };
 
-    updateUser = async (req, res) => {
+    updateUser = async (req, res, next) => {
         try {
             const entity = userMapper.toEntity(req.body);
             const result = await this.userService.update(req.params.id, entity);
@@ -59,7 +59,7 @@ export default class UserController {
         }
     };
 
-    deleteUser = async (req, res) => {
+    deleteUser = async (req, res, next) => {
         try {
             const result = await this.userService.delete(req.params.id);
             if (result) {

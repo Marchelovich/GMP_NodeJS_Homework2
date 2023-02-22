@@ -10,31 +10,40 @@ import { validateUserMiddleware } from './middlewares/userMiddleware';
 import { validateGroupMiddleware, validateUsersIds } from './middlewares/groupMiddleware';
 import UserService from '../services/userService';
 import GroupService from '../services/groupService';
+import checkAuthMiddleware from './middlewares/checkAuthMiddleware';
+import AuthController from './AuthController';
+import AuthService from '../services/AuthService';
+import corsMiddleware from './middlewares/corsMiddleware';
 
 const userController = new UserController(new UserService(new UserRepository(UserModel, UserMapper)));
 const groupController = new GroupController(new GroupService(new GroupRepository(GroupModel, GroupMapper, UserModel)));
+const authController = new AuthController(new AuthService());
 
 const routes = (app) => {
+    app.use(corsMiddleware);
     app.route('/users')
-        .get(userController.getUsers)
-        .post(validateUserMiddleware, userController.addNewUser);
+        .get(checkAuthMiddleware, userController.getUsers)
+        .post(checkAuthMiddleware, validateUserMiddleware, userController.addNewUser);
 
     app.route('/users/:id')
-        .get(userController.getUserByID)
-        .put(validateUserMiddleware, userController.updateUser)
-        .delete(userController.deleteUser);
+        .get(checkAuthMiddleware, userController.getUserByID)
+        .put(checkAuthMiddleware, validateUserMiddleware, userController.updateUser)
+        .delete(checkAuthMiddleware, userController.deleteUser);
 
     app.route('/groups')
-        .get(groupController.getGroups)
-        .post(validateGroupMiddleware, groupController.addNewGroup);
+        .get(checkAuthMiddleware, groupController.getGroups)
+        .post(checkAuthMiddleware, validateGroupMiddleware, groupController.addNewGroup);
 
     app.route('/groups/:id')
-        .get(groupController.getGroupByID)
-        .put(validateGroupMiddleware, groupController.updateGroup)
-        .delete(groupController.deleteGroup);
+        .get(checkAuthMiddleware, groupController.getGroupByID)
+        .put(checkAuthMiddleware, validateGroupMiddleware, groupController.updateGroup)
+        .delete(checkAuthMiddleware, groupController.deleteGroup);
 
     app.route('/groups/:id/add-users')
-        .post(validateUsersIds, groupController.addUsersToGroup);
+        .post(checkAuthMiddleware, validateUsersIds, groupController.addUsersToGroup);
+
+    app.route('/login')
+        .post(authController.auth);
 };
 
 export default routes;

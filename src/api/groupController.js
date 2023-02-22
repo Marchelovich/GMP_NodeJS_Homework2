@@ -6,7 +6,7 @@ export default class GroupController {
         this.groupRepository = groupRepository;
     }
 
-    addNewGroup = async (req, res) => {
+    addNewGroup = async (req, res, next) => {
         try {
             const entity = GroupMapper.toEntity(req.body);
             const group = await this.groupRepository.create(entity);
@@ -17,7 +17,7 @@ export default class GroupController {
         }
     };
 
-    getGroups = async (req, res) => {
+    getGroups = async (req, res, next) => {
         try {
             const groups = await this.groupRepository.getAll();
             res.send(groups);
@@ -27,7 +27,7 @@ export default class GroupController {
         }
     };
 
-    getGroupByID = async (req, res) => {
+    getGroupByID = async (req, res, next) => {
         try {
             const group = await this.groupRepository.getByID(req.params.id);
             if (group !== null) {
@@ -41,7 +41,7 @@ export default class GroupController {
         }
     };
 
-    updateGroup = async (req, res) => {
+    updateGroup = async (req, res, next) => {
         try {
             const entity = GroupMapper.toEntity(req.body);
             const result = await this.groupRepository.update(req.params.id, entity);
@@ -60,7 +60,7 @@ export default class GroupController {
     };
 
 
-    deleteGroup = async (req, res) => {
+    deleteGroup = async (req, res, next) => {
         try {
             const result = await this.groupRepository.delete(req.params.id);
             if (result) {
@@ -74,7 +74,7 @@ export default class GroupController {
         }
     };
 
-    addUsersToGroup = async (req, res) => {
+    addUsersToGroup = async (req, res, next) => {
         try {
             const result = await this.groupRepository.addUsersToGroup(req.params.id, req.body.usersIds);
             if (result) {
@@ -88,6 +88,6 @@ export default class GroupController {
             logger.error(`GroupController::addUsersToGroup | Args: ${JSON.stringify(req.params)}, ${JSON.stringify(req.body.usersIds)} | Error: ${err.message}`);
             next(err);
         }
-    }
+    };
 }
 
