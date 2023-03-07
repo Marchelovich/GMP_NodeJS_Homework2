@@ -1,6 +1,4 @@
 node_modules
-
-src/config/db.json
-src/config/jwt.json
-src/config/cors.json
+.env
 build
+coverage
