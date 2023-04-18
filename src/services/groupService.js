@@ -4,26 +4,26 @@ export default class GroupService {
     }
 
     async getByID(ID) {
-        return this.groupRepository.getByID(ID);
+        return await this.groupRepository.getByID(ID);
     }
 
     async getAll() {
-        return this.groupRepository.getAll();
+        return await this.groupRepository.getAll();
     }
 
     async create(entity) {
-        return this.groupRepository.create(entity);
+        return await this.groupRepository.create(entity);
     }
 
     async update(ID, entity) {
-        return this.groupRepository.update(ID, entity);
+        return await this.groupRepository.update(ID, entity);
     }
 
     async delete(ID) {
-        return this.groupRepository.delete(ID);
+        return await this.groupRepository.delete(ID);
     }
 
     async addUsersToGroup(groupId, userIds) {
-        return this.groupRepository.addUsersToGroup(groupId, userIds);
+        return await this.groupRepository.addUsersToGroup(groupId, userIds);
     }
 }

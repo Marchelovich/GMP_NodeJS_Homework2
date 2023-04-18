@@ -6,18 +6,18 @@ export default class UserController {
         this.userService = userService;
     }
 
-    addNewUser = async (req, res) => {
+    async addNewUser(req, res, next) {
         try {
             const entity = userMapper.toEntity(req.body);
             const user = await this.userService.create(entity);
             res.send(user);
         } catch (err) {
             logger.error(`UserController::addNewUser | Args: ${JSON.stringify(req.body)} | Error: ${err.message}`);
-            res.status(500);
+            next(err);
         }
-    };
+    }
 
-    getUsers = async (req, res, next) => {
+    async getUsers(req, res, next) {
         try {
             const users = await this.userService.getUsers(req.query.login, req.query.limit);
             res.send(users);
@@ -25,9 +25,9 @@ export default class UserController {
             logger.error(`UserController::getUsers | Args: ${JSON.stringify(req.query)} | Error: ${err.message}`);
             next(err);
         }
-    };
+    }
 
-    getUserByID = async (req, res) => {
+    async getUserByID(req, res, next) {
         try {
             const user = await this.userService.getByID(req.params.id);
             if (user !== null) {
@@ -39,9 +39,9 @@ export default class UserController {
             logger.error(`UserController::getUserByID | Args: ${JSON.stringify(req.params)} | Error: ${err.message}`);
             next(err);
         }
-    };
+    }
 
-    updateUser = async (req, res) => {
+    async updateUser(req, res, next) {
         try {
             const entity = userMapper.toEntity(req.body);
             const result = await this.userService.update(req.params.id, entity);
@@ -51,15 +51,15 @@ export default class UserController {
             } else if (!result.error) {
                 res.send(result);
             } else {
-                res.status(500).send(result.error);
+                throw new Error(result.error);
             }
         } catch (err) {
             logger.error(`UserController::updateUser | Args: ${JSON.stringify(req.body)}, ${JSON.stringify(req.body.usersIds)} | Error: ${err.message}`);
             next(err);
         }
-    };
+    }
 
-    deleteUser = async (req, res) => {
+    async deleteUser(req, res, next) {
         try {
             const result = await this.userService.delete(req.params.id);
             if (result) {
@@ -71,6 +71,6 @@ export default class UserController {
             logger.error(`UserController::deleteUser | Args: ${JSON.stringify(req.params)} | Error: ${err.message}`);
             next(err);
         }
-    };
+    }
 }
 

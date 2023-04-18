@@ -5,7 +5,6 @@ export default class UserService {
     }
 
     async getUsers(loginSubstring: string = '', limit: number = 10) {
-        throw new Error('123');
         return this.userRepository.getAutoSuggestUsers(loginSubstring, limit);
     }
 

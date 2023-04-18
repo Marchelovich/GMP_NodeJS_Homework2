@@ -1,4 +1,4 @@
 node_modules
-
-src/config/db.json
+.env
 build
+coverage
